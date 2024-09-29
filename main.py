@@ -1,37 +1,65 @@
-"""Main program for the calculator."""
+import sys
+from calculator import operations
+from decimal import Decimal, InvalidOperation
 
-from decimal import Decimal
-from calculator.operations import add, subtract, multiply, divide
-from calculator.calculation import Calculation
-from calculator.transactions import Calculations
+# Initialize an empty history list
+history = []
+
+def calculate_and_print(a, b, operation_name):
+    operation_mappings = {
+        'add': operations.add,
+        'subtract': operations.subtract,
+        'multiply': operations.multiply,
+        'divide': operations.divide,
+    }
+
+    # Unified error handling for decimal conversion
+    try:
+        a_decimal, b_decimal = map(Decimal, [a, b])
+        result_function = operation_mappings.get(operation_name)
+        if result_function:
+            calculation_result = result_function(a_decimal, b_decimal)
+            history.append(f"{a} {operation_name} {b} = {calculation_result}")
+            print(f"The result of {a} {operation_name} {b} is equal to {calculation_result}")
+        else:
+            print(f"Unknown operation: {operation_name}")
+    except InvalidOperation:
+        print(f"Invalid number input: {a} or {b} is not a valid number.")
+    except ZeroDivisionError:
+        print("Error: Division by zero.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+def show_history():
+    """Display the history of calculations."""
+    if not history:
+        print("No history available.")
+        return
+    print("Calculation History:")
+    for entry in history:
+        print(entry)
 
 def main():
-    """Main function to demonstrate the calculator."""
-    print("Simple Calculator:")
-    
-    # Example calculations
-    a, b = Decimal('10'), Decimal('5')
-    
-    # Add calculation
-    addition = Calculation.create(a, b, add)
-    result = addition.perform()
-    Calculations.add_calculation(addition)
-    print(f"Addition: {a} + {b} = {result}")
-    
-    # Subtract calculation
-    subtraction = Calculation.create(a, b, subtract)
-    result = subtraction.perform()
-    Calculations.add_calculation(subtraction)
-    print(f"Subtraction: {a} - {b} = {result}")
-    
-    # View history
-    print("\nCalculation History:")
-    for calc in Calculations.get_history():
-        print(f"{calc.a} {calc.operation.__name__} {calc.b} = {calc.perform()}")
-    
-    # Clear history
-    Calculations.clear_history()
-    print("\nHistory cleared.")
-    
-if __name__ == "__main__":
+    print("Welcome to the Calculator!")
+    while True:
+        command = input("Enter 'c' to perform a calculation, 'h' to view history, or 'q' to quit: ").strip().lower()
+        
+        if command == 'c':
+            operation = input("Enter the operation (add, subtract, multiply, divide): ").strip().lower()
+            a = input("Enter the first number: ")
+            b = input("Enter the second number: ")
+            calculate_and_print(a, b, operation)
+        
+        elif command == 'h':
+            show_history()
+
+        elif command == 'q':
+            print("Exiting the calculator.")
+            break
+        
+        else:
+            print("Invalid command. Please try again.")
+
+if __name__ == '__main__':
     main()
+    

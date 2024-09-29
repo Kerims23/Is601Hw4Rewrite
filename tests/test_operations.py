@@ -1,26 +1,18 @@
-"""Test operations for the calculator."""
-
+'''docstring for pytest'''
 from decimal import Decimal
 import pytest
-from calculator.operations import add, subtract, multiply, divide
+from calculator.calculation import Calculation
+from calculator.operations import divide #
 
-def test_add():
-    """Test addition."""
-    assert add(Decimal('2'), Decimal('3')) == Decimal('5')
+def test_operation(a, b, operation, expected):# pylint: disable=invalid-name
+    '''Testing various operations'''
+    calculation = Calculation.create(a, b, operation)
+    assert calculation.perform() == expected, f"{operation.__name__} operation failed"
 
-def test_subtract():
-    """Test subtraction."""
-    assert subtract(Decimal('5'), Decimal('3')) == Decimal('2')
-
-def test_multiply():
-    """Test multiplication."""
-    assert multiply(Decimal('2'), Decimal('3')) == Decimal('6')
-
-def test_divide():
-    """Test division."""
-    assert divide(Decimal('6'), Decimal('3')) == Decimal('2')
-
+# Keeping the divide by zero test as is since it tests a specific case
 def test_divide_by_zero():
-    """Test division by zero."""
-    with pytest.raises(ValueError):
-        divide(Decimal('1'), Decimal('0'))
+    '''Testing the divide by zero exception'''
+    with pytest.raises(ValueError, match="Cannot divide by zero"):
+        calculation = Calculation(Decimal('10'), Decimal('0'), divide)
+        calculation.perform()
+        
