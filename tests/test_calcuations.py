@@ -59,3 +59,4 @@ def test_divide_by_zero():
     calc = Calculation(Decimal('10'), Decimal('0'), divide)#Create a Calculation instance with a zero divisor.
     with pytest.raises(ValueError, match="Cannot divide by zero"):#Expect ValueError to be raised.
         calc.perform()  # Attempt to perform the calculation, which should trigger the ValueError.
+        
