@@ -1,64 +1,64 @@
-from decimal import Decimal
-from calculator.operations import add, subtract, multiply, divide
-from calculator.calculation import Calculation
+import sys
+from calculator import operations
+from decimal import Decimal, InvalidOperation
 
-def print_menu():
-    """Prints the menu of operations."""
-    print("\nCalculator Operations:")
-    print("1. Add")
-    print("2. Subtract")
-    print("3. Multiply")
-    print("4. Divide")
-    print("5. Exit")
+# Initialize an empty history list
+history = []
 
-def get_user_input():
-    """Get numbers and operation choice from the user."""
-    try:
-        a = Decimal(input("Enter the first number: "))
-        b = Decimal(input("Enter the second number: "))
-        print_menu()
-        operation_choice = input("Choose an operation (1-4): ")
-        return a, b, operation_choice
-    except Exception as e:
-        print(f"Invalid input: {e}")
-        return None, None, None
-
-def perform_operation(a, b, operation_choice):
-    """Perform the operation based on user's choice."""
-    operations_map = {
-        "1": add,
-        "2": subtract,
-        "3": multiply,
-        "4": divide
+def calculate_and_print(a, b, operation_name):
+    operation_mappings = {
+        'add': operations.add,
+        'subtract': operations.subtract,
+        'multiply': operations.multiply,
+        'divide': operations.divide,
     }
 
-    operation_func = operations_map.get(operation_choice)
-    if operation_func is None:
-        print("Invalid operation choice")
-        return
-
+    # Unified error handling for decimal conversion
     try:
-        calculation = Calculation.create(a, b, operation_func)
-        result = calculation.perform()
-        print(f"Result: {result}")
-    except ValueError as e:
-        print(f"Error: {e}")
+        a_decimal, b_decimal = map(Decimal, [a, b])
+        result_function = operation_mappings.get(operation_name)
+        if result_function:
+            calculation_result = result_function(a_decimal, b_decimal)
+            history.append(f"{a} {operation_name} {b} = {calculation_result}")
+            print(f"The result of {a} {operation_name} {b} is equal to {calculation_result}")
+        else:
+            print(f"Unknown operation: {operation_name}")
+    except InvalidOperation:
+        print(f"Invalid number input: {a} or {b} is not a valid number.")
+    except ZeroDivisionError:
+        print("Error: Division by zero.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+def show_history():
+    """Display the history of calculations."""
+    if not history:
+        print("No history available.")
+        return
+    print("Calculation History:")
+    for entry in history:
+        print(entry)
 
 def main():
-    """Main function to run the interactive calculator."""
     print("Welcome to the Calculator!")
-
     while True:
-        a, b, operation_choice = get_user_input()
+        command = input("Enter 'c' to perform a calculation, 'h' to view history, or 'q' to quit: ").strip().lower()
+        
+        if command == 'c':
+            a = input("Enter the first number: ")
+            b = input("Enter the second number: ")
+            operation = input("Enter the operation (add, subtract, multiply, divide, exponent, radical_expression): ").strip().lower()
+            calculate_and_print(a, b, operation)
+        
+        elif command == 'h':
+            show_history()
 
-        if a is None or b is None:
-            continue
-
-        if operation_choice == "5":
-            print("Exiting calculator.")
+        elif command == 'q':
+            print("Exiting the calculator.")
             break
+        
+        else:
+            print("Invalid command. Please try again.")
 
-        perform_operation(a, b, operation_choice)
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
