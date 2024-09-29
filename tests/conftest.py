@@ -65,3 +65,4 @@ def pytest_generate_tests(metafunc):
         # Modify parameters to fit test functions' expectations
         modified_parameters = [(a, b, op_name if 'operation_name' in metafunc.fixturenames else op_func, expected) for a, b, op_name, op_func, expected in parameters]
         metafunc.parametrize("a,b,operation,expected", modified_parameters)
+        

@@ -45,9 +45,9 @@ def main():
         command = input("Enter 'c' to perform a calculation, 'h' to view history, or 'q' to quit: ").strip().lower()
         
         if command == 'c':
+            operation = input("Enter the operation (add, subtract, multiply, divide): ").strip().lower()
             a = input("Enter the first number: ")
             b = input("Enter the second number: ")
-            operation = input("Enter the operation (add, subtract, multiply, divide, exponent, radical_expression): ").strip().lower()
             calculate_and_print(a, b, operation)
         
         elif command == 'h':
@@ -62,3 +62,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+    

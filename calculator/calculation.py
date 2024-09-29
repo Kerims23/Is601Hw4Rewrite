@@ -11,6 +11,10 @@ class Calculation:
         self.b = b
         self.operation = operation
 
+    def __repr__(self):
+        # Assuming operation is a function, we use its name for representation
+        return f"Calculation({self.a}, {self.b}, {self.operation.__name__})"
+    
     def perform(self) -> Decimal:
         """Performs the operation."""
         return self.operation(self.a, self.b)
